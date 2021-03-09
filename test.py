@@ -20,6 +20,10 @@ class Mat2(db.Model):
     pris = db.Column(db.Integer, unique=False, nullable=False)
     typ = db.Column(db.String(1), unique=False, nullable=False) #Vegetarisk, Kött,
 
+    def update(self,newdata):
+        for key,value in newdata.items():
+            setattr(self,key,value)       
+
     def serialize(self):
         return {
             'typ': self.typ,
@@ -32,18 +36,37 @@ class Mat2(db.Model):
 db.create_all()
 
 
-# v1 = Mat2(namn="Hamburgare", typ="K", pris=99  )
-# v2 = Mat2(namn="Pannkakor", typ="V", pris=20  )
+@app.route('/mat2', methods=['POST'])
+def create_mat():
+    dc = json.loads(request.data)
+    aa = Mat2(**dc)
+    db.session.add(aa)                       
+    db.session.commit()
+    return redirect(url_for('showMat',id=aa.id))
 
-# db.session.add(v1)
-# db.session.add(v2)
-# db.session.commit()
 
 
 @app.route('/mat2/<int:id>', methods=['GET'])
 def showMat(id):    
     m = Mat2.query.filter_by(id=id).one()
     return jsonify(m.serialize())
+
+
+@app.route('/mat2/<int:id>', methods=['PUT'])
+def updateMat(id):    
+    m = Mat2.query.filter_by(id=id).one()
+    dc = json.loads(request.data)
+    m.update(dc)
+    db.session.commit()
+    return jsonify(m.serialize())
+
+
+@app.route('/mat2/<int:id>', methods=['DELETE'])
+def deleteMat(id):    
+    m = Mat2.query.filter_by(id=id).one()
+    db.session.delete(m)
+    db.session.commit()
+    return jsonify("")
 
 
 
