@@ -42,7 +42,7 @@ def create_mat():
     aa = Mat2(**dc)
     db.session.add(aa)                       
     db.session.commit()
-    return redirect(url_for('mat2',id=aa.id))
+    return redirect(url_for('get_mat',id=aa.id))
 
 
 
