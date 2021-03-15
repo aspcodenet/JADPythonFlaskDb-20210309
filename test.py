@@ -66,7 +66,7 @@ def deleteMat(id):
     m = Mat2.query.filter_by(id=id).one()
     db.session.delete(m)
     db.session.commit()
-    return jsonify("")
+    return ""
 
 
 
